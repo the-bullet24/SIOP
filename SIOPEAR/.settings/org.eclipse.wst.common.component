@@ -2,6 +2,7 @@
     <wb-module deploy-name="SIOPEAR">
         <wb-resource deploy-path="/" source-path="/" tag="defaultRootSource"/>
         <dependent-module archiveName="SIOP.war" deploy-path="/" handle="module:/resource/SIOP/SIOP">
+            <dependent-object>Module_1707491448856</dependent-object>
             <dependency-type>uses</dependency-type>
         </dependent-module>
     </wb-module>

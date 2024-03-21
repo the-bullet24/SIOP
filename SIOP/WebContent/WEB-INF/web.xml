@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" 
+version="3.0" 
+xmlns="http://java.sun.com/xml/ns/javaee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>SIOP</display-name>
+	
+	
+	<welcome-file-list>
+	
+		<welcome-file>index.jsp</welcome-file>
+	
+	</welcome-file-list>
+	
+ <servlet>
+    <display-name>dispatcher</display-name>
+	<servlet-name>dispatcher</servlet-name>
+    
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    
+    <init-param>
+       <param-name>contextConfigLocation</param-name>
+       <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+	
+	  <servlet-mapping>
+    	<servlet-name>dispatcher</servlet-name>
+   		 <url-pattern>/*</url-pattern>
+  	</servlet-mapping>
+  	
+ 
+  	<!-- Fces Servlet  -->
+  	
+  	<servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+	</servlet>
+
+
+
+
+	 
+  	<!-- Comen  -->
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener> 
+	
+	
+	<service-ref>
+		<description>
+		WSDL Service AutenticaRegService</description>
+		<service-ref-name>service/AutenticaRegService</service-ref-name>
+		<service-interface>seguridad.service.AutenticaRegService</service-interface>
+		<wsdl-file>WEB-INF/wsdl/AutenticaReg.wsdl</wsdl-file>
+		<jaxrpc-mapping-file>WEB-INF/AutenticaReg_mapping.xml</jaxrpc-mapping-file>
+		<service-qname xmlns:pfx="http://service.seguridad">
+		pfx:AutenticaRegService</service-qname>
+		<port-component-ref>
+			<service-endpoint-interface>seguridad.service.AutenticaReg</service-endpoint-interface>
+		</port-component-ref>
+	</service-ref>
+  	
+	
+<!--     <post-construct> -->
+<!--         <lifecycle-callback-class>pe.bn.com.siop.presentacion.controlador.LoginController</lifecycle-callback-class> -->
+<!--         <lifecycle-callback-method>init</lifecycle-callback-method> -->
+<!--     </post-construct>  -->
+  	
+</web-app>
+
+

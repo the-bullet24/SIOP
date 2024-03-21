@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:botDetect = "https://captcha.com/java/jsf/simple-api"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<div id="cabecera">
+		<div class="logo-sv">
+			<img src="#{request.contextPath}/resources/img/loguito-mwbm.jpg" />
+		</div>
+		<div class="centrar">
+			<div class="presentacion">
+				<div class="izquierda">
+					<p:panelGrid columns="2" layout="grid" styleClass="tb-izquierda">
+						<p:outputLabel value="NOMBRE&nbsp;:	" />
+						<p:outputLabel value="#{seguridadController.seguridadModel.usuario.nombreCompleto()}" />
+						<p:outputLabel value="AREA&emsp;&ensp;&nbsp;&thinsp;:	" />
+						<p:outputLabel value="#{seguridadController.seguridadModel.usuario.nombreArea}" />
+					</p:panelGrid>
+				</div>
+				<div class="derecha">
+					<p:panelGrid columns="2" styleClass="tb-izquierda">
+						<p:outputLabel value="USUARIO&thinsp;&thinsp;:	" />
+						<p:outputLabel value="#{seguridadController.seguridadModel.usuario.username.toUpperCase()}" />
+						<p:outputLabel value="FECHA&emsp;&ensp;:	" />
+
+					</p:panelGrid>
+				</div>
+			</div>
+		</div>
+		<div class="logo-bn">
+			<img src="#{request.contextPath}/resources/img/logo-bn-2015.png" />
+		</div>
+
+	</div>
+	<br />
+	<h:form>
+		<div id="cerrar" style="display: none;">
+			<p:commandLink ajax="false"
+				actionListener="#{seguridadController.cerrarSesion}">
+				<h:outputText value="Cerrar Sesión" />
+			</p:commandLink>
+		</div>
+		<p:idleMonitor
+			timeout="#{seguridadController.tiempoMaximoInactividad()}">
+			<p:ajax event="idle"
+				listener="#{seguridadController.forzarCierreSesion()}"
+				oncomplete="PF('sessionExpiredDialog').show();" />
+		</p:idleMonitor>
+
+		<p:dialog style="background-color:#f0f0f0;position:absolute"
+			header="Sesion Expirada" widgetVar="sessionExpiredDialog"
+			modal="true" appendToBody="true" closable="false" resizable="false"
+			draggable="false">
+			<div style="float: left; margin: 20px 0 20px 20px">
+				<p:graphicImage style="float:left" name="img/chica.png" />
+			</div>
+
+			<div style="float: right; margin: 20px 0 0 0">
+				<h:outputText style="position:relative;background: url(#{request.contextPath}/resources/img/plantillaBN/mapeo.jpg) no-repeat;height: 100px;padding: 35px 20px 0px 70px;width: 200px;float:right;margin-top:30px;"
+					value="#{seguridadController.mensajeSesionExpirada()}" />
+			</div>
+
+			<f:facet name="footer">
+				<div style="background-color: #f0f0f0; text-align: center;">
+					<p:button value="Aceptar" outcome="#{seguridadController.paginaLogin()}" />
+				</div>
+			</f:facet>
+		</p:dialog>
+
+		<p:megaMenu>
+			<p:submenu label="#{cad['menu.bancaMovil']}"
+				rendered="#{seguridadController.renderizar('ACCESO_CONSULTAS')}"
+				styleClass="fuente_menu1">
+				<p:column>
+					<p:submenu >
+						
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_OPERACIONES_REALIZADAS')}"
+							value="#{cad['menu.consulta.operaciones.realizadas']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_operaciones.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_OPERACIONES_PRESTAMOS')}"
+							value="#{cad['menu.consulta.operaciones.prestamos']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_operaciones_prestamos.jsf?faces-redirect=true" />
+						</p:menuitem>
+
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_RESUMENES_OPERATIVOS')}"
+							value="#{cad['menu.consulta.resumenes.operativos']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_resumenes.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_ACTIVIDADES_USUARIO')}"
+							value="#{cad['menu.consulta.actividades.usuario']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_actividades_usuario.jsf?faces-redirect=true" />
+						</p:menuitem>
+					</p:submenu>
+				</p:column>
+			</p:submenu>
+
+			<p:submenu label="#{cad['menu.multired']}"
+				rendered="#{seguridadController.renderizar('ACCESO_CONSULTAS')}"
+				styleClass="fuente_menu1">
+				<p:column>
+					<p:submenu >
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_OPERACIONES_MULTIRED_VIRTUAL')}"
+							value="#{cad['menu.consulta.operaciones.mv']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_operaciones_multired_virtual.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_SELLO_SEGURIDAD')}"
+							value="#{cad['menu.consulta.sello.seguridad']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_sello_seguridad.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_MENSAJES_SATI')}"
+							value="#{cad['menu.consulta.mensajes']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/mantenimiento/mant_mensajes_sati.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_ARCHIVO_DIARIO')}"
+							value="#{cad['menu.consulta.archivo.diario']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_archivo_diario.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_IP_NO_PERMITIDA')}"
+							value="#{cad['menu.consulta.ip.no.permitida']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_ip_no_permitida.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_REGISTRO_AFILIACION')}"
+							value="#{cad['menu.consulta.registro.afiliacion']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_registro_afiliacion.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_TRANSACCION')}"
+							value="#{cad['menu.consulta.transacciones']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_consulta_transaccion.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSOLIDADO_TRANSACCION')}"
+							value="#{cad['menu.consolidado.transacciones']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_consolidado_cliente_transaccion.jsf?faces-redirect=true" />
+						</p:menuitem>
+					</p:submenu>
+				</p:column>
+			</p:submenu>	
+			
+			
+			<p:submenu label="#{cad['menu.claveSMS']}"
+				rendered="#{seguridadController.renderizar('ACCESO_CONSULTAS')}"
+				styleClass="fuente_menu1">
+				<p:column>
+					<p:submenu >
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_AFILIACION')}"
+							value="#{cad['menu.consulta.afiliaciones']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_afiliaciones.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_CLAVE_SMS_GENERADAS')}"
+							value="#{cad['menu.consulta.clave.sms.generadas']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_clave_sms_generadas.jsf?faces-redirect=true" />
+						</p:menuitem>
+						
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_CLIENTES_AFILIADOS')}"
+							value="#{cad['menu.consulta.clave.sms.clientes.afiliados']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_clientes_afiliados.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_CLAVE_SMS_ACTIVOS_CANAL')}"
+							value="#{cad['menu.consulta.clave.sms.activos.canal']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina"
+								value="/consulta/cons_clave_sms_activos_canal.jsf?faces-redirect=true" />
+						</p:menuitem>
+						
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_CONSULTA_OPERACIONES_CANAL')}"
+							value="#{cad['menu.consulta.operaciones.canal']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina" value="/consulta/cons_operaciones_canal.jsf?faces-redirect=true" />
+						</p:menuitem>
+					</p:submenu>
+				</p:column>
+			</p:submenu>
+
+
+			<p:submenu label="#{cad['menu.generacion']}"
+			styleClass="fuente_menu1">
+				<p:column>
+					<p:submenu>
+						<p:menuitem styleClass="fuente_menu2"
+							value="#{cad['menu.consulta.generacion']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina" value="/consulta/cons_generacion_clave_seis.jsf?faces-redirect=true" />
+						</p:menuitem>
+					</p:submenu>
+				</p:column>
+			</p:submenu>
+
+								
+			<p:submenu label="#{cad['menu.mantenimiento']}"
+			rendered="#{seguridadController.renderizar('ACCESO_MANTENIMIENTO_PARAMETROS')}"
+			styleClass="fuente_menu1">
+				<p:column>
+					<p:submenu>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_MANTENIMIENTO_PARAMETROS')}"
+							value="#{cad['menu.mantenimiento.sabm']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina" value="/mantenimiento/mant_parametros.jsf?faces-redirect=true" />
+						</p:menuitem>
+						<p:menuitem styleClass="fuente_menu2"
+							rendered="#{seguridadController.renderizar('ACCESO_MANTENIMIENTO_VALIDACION_IP')}"
+							value="#{cad['menu.mantenimiento.validacionIP']}"
+							actionListener="#{seguridadController.redireccionar}">
+							<f:attribute name="pagina" value="/mantenimiento/mant_validacion_IP.jsf?faces-redirect=true" />
+						</p:menuitem>
+					</p:submenu>
+				</p:column>
+			</p:submenu>					
+								
+											
+
+
+			<f:facet name="options">
+				<p:commandButton value="CERRAR SESIÓN" id="cerrarsession"
+					actionListener="#{seguridadController.cerrarSesion}" ajax="false" />
+			</f:facet>
+
+		</p:megaMenu>
+
+	</h:form>
+
+</ui:composition>
